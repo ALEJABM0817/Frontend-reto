@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 
 interface AnalystRating {
   id: number
@@ -38,6 +38,8 @@ const fetchData = async (page: number = 1) => {
   }
 }
 
+const hasNextPage = computed(() => data.value.length > 0)
+
 const nextPage = () => {
   currentPage.value += 1
   fetchData(currentPage.value)
@@ -50,6 +52,29 @@ const prevPage = () => {
   }
 }
 
+const sortKey = ref<'id' | 'ticker' | 'company' | 'action' | 'brokerage' | 'rating_from' | 'rating_to' | 'target_from' | 'target_to' | 'time'>('id')
+const sortOrder = ref<'asc' | 'desc'>('asc')
+
+const sortedData = computed(() => {
+  return [...data.value].sort((a, b) => {
+    let valA = a[sortKey.value]
+    let valB = b[sortKey.value]
+
+    if (sortKey.value === 'time') {
+      valA = new Date(valA)
+      valB = new Date(valB)
+    }
+
+    if (sortKey.value === 'target_from' || sortKey.value === 'target_to') {
+      valA = parseFloat((valA as string).replace(/[^0-9.]/g, ''))
+      valB = parseFloat((valB as string).replace(/[^0-9.]/g, ''))
+    }
+    if (valA < valB) return sortOrder.value === 'asc' ? -1 : 1
+    if (valA > valB) return sortOrder.value === 'asc' ? 1 : -1
+    return 0
+  })
+})
+
 onMounted(() => {
   fetchData()
 })
@@ -58,6 +83,24 @@ onMounted(() => {
 <template>
   <div class="p-4">
     <h2 class="text-xl font-bold mb-4">Tabla de Datos</h2>
+    <div class="flex gap-2 mb-4">
+      <label class="font-semibold">Ordenar por:</label>
+      <select v-model="sortKey" class="border rounded px-2 py-1">
+        <option value="id">ID</option>
+        <option value="ticker">Ticker</option>
+        <option value="company">Empresa</option>
+        <option value="action">Acción</option>
+        <option value="brokerage">Brokerage</option>
+        <option value="rating_from">Rating de</option>
+        <option value="rating_to">Rating a</option>
+        <option value="target_from">Target de</option>
+        <option value="target_to">Target a</option>
+        <option value="time">Fecha</option>
+      </select>
+      <button @click="sortOrder = sortOrder === 'asc' ? 'desc' : 'asc'" class="px-2 py-1 bg-gray-200 rounded">
+        {{ sortOrder === 'asc' ? 'Ascendente' : 'Descendente' }}
+      </button>
+    </div>
     <div v-if="loading">Cargando...</div>
     <div v-else-if="error">{{ error }}</div>
     <table v-else class="min-w-full border text-xs">
@@ -76,7 +119,7 @@ onMounted(() => {
         </tr>
       </thead>
       <tbody>
-        <tr v-for="item in data" :key="item.id">
+        <tr v-for="item in sortedData" :key="item.id">
           <td class="border px-2 py-1">{{ item.id }}</td>
           <td class="border px-2 py-1">{{ item.ticker }}</td>
           <td class="border px-2 py-1">{{ item.company }}</td>
@@ -100,7 +143,8 @@ onMounted(() => {
       </button>
       <button
         @click="nextPage"
-        class="px-4 py-2 bg-blue-500 text-white rounded"
+        :disabled="!hasNextPage"
+        class="px-4 py-2 bg-blue-500 text-white rounded disabled:opacity-50"
       >
         Siguiente página
       </button>

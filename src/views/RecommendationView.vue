@@ -20,7 +20,7 @@ const fetchRecommendation = async (): Promise<void> => {
   try {
     const url = new URL('recommendation', backendUrl)
     const res = await fetch(url.toString())
-    if (!res.ok) throw new Error('Error fetching recommendation')
+    if (!res.ok) throw new Error('Error al obtener la recomendación')
     recommendation.value = await res.json()
   } catch (err: any) {
     error.value = err.message
@@ -36,20 +36,20 @@ onMounted(() => {
 
 <template>
   <div class="p-4">
-    <h2 class="text-xl font-bold mb-4">Investment Recommendation</h2>
-    <div v-if="loading">Loading...</div>
+    <h2 class="text-xl font-bold mb-4">Recomendación de Inversión</h2>
+    <div v-if="loading">Cargando...</div>
     <div v-else-if="error">{{ error }}</div>
     <div v-else-if="recommendation">
       <div class="bg-green-100 p-4 rounded shadow">
-        <p class="font-semibold">Best Stock to Invest:</p>
+        <p class="font-semibold">Mejor acción para invertir:</p>
         <p class="text-lg font-bold">{{ recommendation.recommendation }}</p>
-        <p>Company: {{ recommendation.company }}</p>
-        <p>Buy Ratings: {{ recommendation.buy_count }}</p>
-        <p>Max Target Price: ${{ recommendation.max_target_to }}</p>
+        <p>Empresa: {{ recommendation.company }}</p>
+        <p>Cantidad de recomendaciones de compra: {{ recommendation.buy_count }}</p>
+        <p>Precio objetivo máximo: ${{ recommendation.max_target_to }}</p>
       </div>
     </div>
     <div v-else>
-      <p>No recommendation available.</p>
+      <p>No hay recomendación disponible.</p>
     </div>
   </div>
 </template>
