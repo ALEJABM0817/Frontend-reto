@@ -61,8 +61,8 @@ const sortedData = computed(() => {
     let valB = b[sortKey.value]
 
     if (sortKey.value === 'time') {
-      valA = new Date(valA)
-      valB = new Date(valB)
+      valA = new Date(valA).getTime()
+      valB = new Date(valB).getTime()
     }
 
     if (sortKey.value === 'target_from' || sortKey.value === 'target_to') {
@@ -81,11 +81,11 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="p-4">
-    <h2 class="text-xl font-bold mb-4">Tabla de Datos</h2>
-    <div class="flex gap-2 mb-4">
+  <div class="p-2 md:p-4 max-w-5xl mx-auto">
+    <h2 class="text-lg md:text-xl font-bold mb-4">Tabla de Datos</h2>
+    <div class="flex flex-col md:flex-row gap-2 mb-4 items-start md:items-center">
       <label class="font-semibold">Ordenar por:</label>
-      <select v-model="sortKey" class="border rounded px-2 py-1">
+      <select v-model="sortKey" class="border rounded px-2 py-1 text-xs md:text-sm">
         <option value="id">ID</option>
         <option value="ticker">Ticker</option>
         <option value="company">Empresa</option>
@@ -97,43 +97,48 @@ onMounted(() => {
         <option value="target_to">Target a</option>
         <option value="time">Fecha</option>
       </select>
-      <button @click="sortOrder = sortOrder === 'asc' ? 'desc' : 'asc'" class="px-2 py-1 bg-gray-200 rounded">
+      <button
+        @click="sortOrder = sortOrder === 'asc' ? 'desc' : 'asc'"
+        class="px-2 py-1 bg-gray-200 rounded text-xs md:text-sm"
+      >
         {{ sortOrder === 'asc' ? 'Ascendente' : 'Descendente' }}
       </button>
     </div>
     <div v-if="loading">Cargando...</div>
     <div v-else-if="error">{{ error }}</div>
-    <table v-else class="min-w-full border text-xs">
-      <thead>
-        <tr>
-          <th class="border px-2 py-1">ID</th>
-          <th class="border px-2 py-1">Ticker</th>
-          <th class="border px-2 py-1">Empresa</th>
-          <th class="border px-2 py-1">Acción</th>
-          <th class="border px-2 py-1">Brokerage</th>
-          <th class="border px-2 py-1">Rating de</th>
-          <th class="border px-2 py-1">Rating a</th>
-          <th class="border px-2 py-1">Target de</th>
-          <th class="border px-2 py-1">Target a</th>
-          <th class="border px-2 py-1">Fecha</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="item in sortedData" :key="item.id">
-          <td class="border px-2 py-1">{{ item.id }}</td>
-          <td class="border px-2 py-1">{{ item.ticker }}</td>
-          <td class="border px-2 py-1">{{ item.company }}</td>
-          <td class="border px-2 py-1">{{ item.action }}</td>
-          <td class="border px-2 py-1">{{ item.brokerage }}</td>
-          <td class="border px-2 py-1">{{ item.rating_from }}</td>
-          <td class="border px-2 py-1">{{ item.rating_to }}</td>
-          <td class="border px-2 py-1">{{ item.target_from }}</td>
-          <td class="border px-2 py-1">{{ item.target_to }}</td>
-          <td class="border px-2 py-1">{{ new Date(item.time).toLocaleDateString() }}</td>
-        </tr>
-      </tbody>
-    </table>
-    <div class="flex gap-2 mt-4">
+    <div v-else class="overflow-x-auto">
+      <table class="min-w-full border text-xs md:text-sm">
+        <thead>
+          <tr>
+            <th class="border px-2 py-1">ID</th>
+            <th class="border px-2 py-1">Ticker</th>
+            <th class="border px-2 py-1">Empresa</th>
+            <th class="border px-2 py-1">Acción</th>
+            <th class="border px-2 py-1">Brokerage</th>
+            <th class="border px-2 py-1">Rating de</th>
+            <th class="border px-2 py-1">Rating a</th>
+            <th class="border px-2 py-1">Target de</th>
+            <th class="border px-2 py-1">Target a</th>
+            <th class="border px-2 py-1">Fecha</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="item in sortedData" :key="item.id">
+            <td class="border px-2 py-1">{{ item.id }}</td>
+            <td class="border px-2 py-1">{{ item.ticker }}</td>
+            <td class="border px-2 py-1">{{ item.company }}</td>
+            <td class="border px-2 py-1">{{ item.action }}</td>
+            <td class="border px-2 py-1">{{ item.brokerage }}</td>
+            <td class="border px-2 py-1">{{ item.rating_from }}</td>
+            <td class="border px-2 py-1">{{ item.rating_to }}</td>
+            <td class="border px-2 py-1">{{ item.target_from }}</td>
+            <td class="border px-2 py-1">{{ item.target_to }}</td>
+            <td class="border px-2 py-1">{{ new Date(item.time).toLocaleDateString() }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="flex flex-col sm:flex-row gap-2 mt-4">
       <button
         @click="prevPage"
         :disabled="currentPage === 1"
