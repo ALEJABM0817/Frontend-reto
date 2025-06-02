@@ -6,7 +6,6 @@ interface Recommendation {
   company: string
   buy_count: number
   max_target_to: number
-  max_diff: number
 }
 
 const recommendation = ref<Recommendation | null>(null)
@@ -47,7 +46,6 @@ onMounted(() => {
         <p>Empresa: {{ recommendation.company }}</p>
         <p>Cantidad de recomendaciones de compra: {{ recommendation.buy_count }}</p>
         <p>Precio objetivo máximo: ${{ recommendation.max_target_to }}</p>
-        <p>Diferencia máxima: ${{ recommendation.max_diff }}</p>
       </div>
     </div>
     <div v-else>
