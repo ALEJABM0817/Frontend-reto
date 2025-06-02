@@ -1,6 +1,20 @@
 # Frontend - Reto Vue 3 + Vite
 
-Repositorio: [https://github.com/ALEJABM0817/Frontend-reto.git](https://github.com/ALEJABM0817/Frontend-reto.git)
+Este frontend es una aplicación web que permite consultar datos de ratings de analistas bursátiles, almacenarlos en la base de datos, listarlos de forma paginada y recibir recomendaciones sobre en qué acción invertir, todo a través de una interfaz sencilla y moderna.
+
+---
+
+## 🌐 URLs de la aplicación desplegada en AWS
+
+- **Frontend:**  
+  [http://frontend-alb-32408893.us-east-1.elb.amazonaws.com/](http://frontend-alb-32408893.us-east-1.elb.amazonaws.com/)
+
+- **Backend:**  
+  [http://backend-alb-574949025.us-east-1.elb.amazonaws.com/](http://backend-alb-574949025.us-east-1.elb.amazonaws.com/)  
+  Puedes probar el endpoint `/ping` en:  
+  [http://backend-alb-574949025.us-east-1.elb.amazonaws.com/ping](http://backend-alb-574949025.us-east-1.elb.amazonaws.com/ping)
+
+---
 
 ## Requisitos
 

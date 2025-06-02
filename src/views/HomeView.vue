@@ -3,7 +3,7 @@ import { useRouter } from 'vue-router'
 const router = useRouter()
 
 const goToTable = (): void => {
-  router.push({ name: 'tabla-datos' })
+  router.push({ name: 'data-table' })
 }
 const goToReport = (): void => {
   router.push({ name: 'recommendation' })

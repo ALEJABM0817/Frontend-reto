@@ -12,8 +12,8 @@ const router = createRouter({
       component: HomeView,
     },
     {
-      path: '/tabla-datos',
-      name: 'tabla-datos',
+      path: '/data-table',
+      name: 'data-table',
       component: DataTableView,
     },
     {
