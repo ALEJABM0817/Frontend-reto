@@ -18,15 +18,18 @@ const data = ref<AnalystRating[]>([])
 const loading = ref(false)
 const error = ref<string | null>(null)
 const currentPage = ref(1)
-
 const backendUrl = import.meta.env.VITE_URL_BACKEND
+const search = ref('')
 
-const fetchData = async (page: number = 1) => {
+const fetchData = async (page: number = 1, searchTerm: string = '') => {
   loading.value = true
   error.value = null
   try {
     const url = new URL('analyst-ratings', backendUrl)
     url.searchParams.append('next_page', page.toString())
+    if (searchTerm) {
+      url.searchParams.append('search', searchTerm)
+    }
     const res = await fetch(url.toString())
     if (!res.ok) throw new Error('Error fetching data')
     const json = await res.json()
@@ -36,6 +39,11 @@ const fetchData = async (page: number = 1) => {
   } finally {
     loading.value = false
   }
+}
+
+const onSearch = () => {
+  currentPage.value = 1
+  fetchData(currentPage.value, search.value)
 }
 
 const hasNextPage = computed(() => data.value.length > 0)
@@ -84,6 +92,19 @@ onMounted(() => {
   <div class="p-2 md:p-4 max-w-5xl mx-auto">
     <h2 class="text-lg md:text-xl font-bold mb-4">Tabla de Datos</h2>
     <div class="flex flex-col md:flex-row gap-2 mb-4 items-start md:items-center">
+      <input
+        v-model="search"
+        @keyup.enter="onSearch"
+        type="text"
+        placeholder="Buscar por Ticker, Empresa, Acción..."
+        class="border rounded px-2 py-1 text-xs md:text-sm flex-grow"
+      />
+      <button
+        @click="onSearch"
+        class="px-4 py-2 bg-blue-500 text-white rounded text-xs md:text-sm"
+      >
+        Buscar
+      </button>
       <label class="font-semibold">Ordenar por:</label>
       <select v-model="sortKey" class="border rounded px-2 py-1 text-xs md:text-sm">
         <option value="id">ID</option>
