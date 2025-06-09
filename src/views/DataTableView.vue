@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted, computed, watch } from 'vue'
 
 interface AnalystRating {
   id: number
@@ -30,6 +30,8 @@ const fetchData = async (page: number = 1, searchTerm: string = '') => {
     if (searchTerm) {
       url.searchParams.append('search', searchTerm)
     }
+    url.searchParams.append('sortKey', sortKey.value)
+    url.searchParams.append('sortOrder', sortOrder.value)
     const res = await fetch(url.toString())
     if (!res.ok) throw new Error('Error fetching data')
     const json = await res.json()
@@ -60,27 +62,12 @@ const prevPage = () => {
   }
 }
 
-const sortKey = ref<'id' | 'ticker' | 'company' | 'action' | 'brokerage' | 'rating_from' | 'rating_to' | 'target_from' | 'target_to' | 'time'>('id')
+const sortKey = ref<'id' | 'ticker' | 'company' | 'action' | 'brokerage' | 'rating_from' | 'rating_to' | 'target_from' | 'target_to' | 'time'>('company')
 const sortOrder = ref<'asc' | 'desc'>('asc')
 
-const sortedData = computed(() => {
-  return [...data.value].sort((a, b) => {
-    let valA = a[sortKey.value]
-    let valB = b[sortKey.value]
-
-    if (sortKey.value === 'time') {
-      valA = new Date(valA).getTime()
-      valB = new Date(valB).getTime()
-    }
-
-    if (sortKey.value === 'target_from' || sortKey.value === 'target_to') {
-      valA = parseFloat((valA as string).replace(/[^0-9.]/g, ''))
-      valB = parseFloat((valB as string).replace(/[^0-9.]/g, ''))
-    }
-    if (valA < valB) return sortOrder.value === 'asc' ? -1 : 1
-    if (valA > valB) return sortOrder.value === 'asc' ? 1 : -1
-    return 0
-  })
+watch([sortKey, sortOrder], () => {
+  currentPage.value = 1
+  fetchData(currentPage.value, search.value)
 })
 
 onMounted(() => {
@@ -144,7 +131,7 @@ onMounted(() => {
           </tr>
         </thead>
         <tbody>
-          <tr v-for="item in sortedData" :key="item.id">
+          <tr v-for="item in data" :key="item.id">
             <td class="border px-2 py-1">{{ item.id }}</td>
             <td class="border px-2 py-1">{{ item.ticker }}</td>
             <td class="border px-2 py-1">{{ item.company }}</td>
